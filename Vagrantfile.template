@@ -1,0 +1,46 @@
+if File.exist?('.custom_settings.rb')
+	load '.custom_settings.rb'
+end
+
+if File.exist?('.custom_before.rb')
+	load '.custom_before.rb'
+end
+
+VM_NAME = '(Undefined Vagrant)' unless defined? VM_NAME
+VM_IMG = 'ubuntu/trusty64'
+VM_IP = '192.168.100.100' unless defined? VM_IP
+VM_MEM = 2048 unless defined? VM_MEM
+VM_CPUS = 2 unless defined? VM_CPUS
+GUEST_SRC_DIR = '/home/vagrant/src' unless defined? GUEST_SRC_DIR
+
+Vagrant.configure(2) do |config|
+	config.vm.box = VM_IMG
+	config.vm.provider :virtualbox do |v, override|
+		v.name = VM_NAME
+		v.memory = VM_MEM
+		v.cpus = VM_CPUS
+	end
+	config.vm.provider :parallels do |v|
+		v.name = VM_NAME
+		v.memory = VM_MEM
+		v.cpus = VM_CPUS
+		v.update_guest_tools = true
+	end
+	config.vm.provider "vmware_fusion" do |v|
+		v.name = VM_NAME
+		v.vmx["memsize"] = VM_MEM
+		v.vmx["numvcpus"] = VM_CPUS
+	end
+
+	if defined? HOST_SRC_DIR
+		config.vm.synced_folder HOST_SRC_DIR, GUEST_SRC_DIR
+	end
+
+	config.vm.provision :shell, path: "build.sh"
+	config.vm.network :private_network, ip: VM_IP
+end
+
+if File.exist?('.custom_after.rb')
+	load '.custom_after.rb'
+end
+
