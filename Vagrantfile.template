@@ -7,7 +7,7 @@ if File.exist?('.custom_before.rb')
 end
 
 VM_NAME = '(Undefined Vagrant)' unless defined? VM_NAME
-VM_IMG = 'ubuntu/trusty64'
+VM_IMG = 'ubuntu/trusty64' unless defined? VM_IMG
 VM_IP = '192.168.100.100' unless defined? VM_IP
 VM_MEM = 2048 unless defined? VM_MEM
 VM_CPUS = 2 unless defined? VM_CPUS
